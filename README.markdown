@@ -1,4 +1,4 @@
-# PAPPLY - a macro for partial application
+# PAPPLY - macros for partial application
 
 PAPPLY is a macro family that offers a shorthand form to write the partial
 application of fucntions.
