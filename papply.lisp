@@ -5,8 +5,6 @@
 ;;; License: MIT License
 (in-package :papply)
 
-(load "chiku-util-local.fasl")
-
 (eval-when (:compile-toplevel :execute)
   #+sbcl (require :sb-cltl2))
 
