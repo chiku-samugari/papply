@@ -122,9 +122,9 @@
   (defun |#'-reader| (strm c n)
     (declare (ignore c n))
     (let ((expr (read strm t nil t)))
-      (if (or (symbolp expr) (eq (car expr) 'cl:lambda))
-        `(function ,expr)
-        `(p ,@expr)))))
+      (if (and (consp expr) (symbolp (car expr)) (not (eq (car expr) 'cl:lambda)))
+        `(p ,@expr)
+        `(function ,expr)))))
 
 (defun extend-sharp-quote ()
   " EXTEND-SHARP-QUOTE activates an extension for #' reader macro. The
