@@ -122,7 +122,11 @@
   (defun |#'-reader| (strm c n)
     (declare (ignore c n))
     (let ((expr (read strm t nil t)))
-      (if (and (consp expr) (symbolp (car expr)) (not (eq (car expr) 'cl:lambda)))
+      (if (and (consp expr)
+               (symbolp (car expr))
+               (not (inq (car expr)
+                         cl:lambda
+                         #+sbcl sb-int:named-lambda)))
         `(p ,@expr)
         `(function ,expr)))))
 

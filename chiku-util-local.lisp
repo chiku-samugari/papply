@@ -26,5 +26,13 @@
     (if (funcall pred tree) (funcall func tree)
       (mapcar #'(lambda (x) (maptree func x :pred pred)) tree))))
 
+(defmacro in (obj &rest choices)
+  (with-gensyms (insym)
+                `(let ((,insym ,obj))
+                   (or ,@(mapcar (lambda (c) `(eql ,insym ,c)) choices)))))
+
+(defmacro inq (obj &rest choices)
+  `(in ,obj ,@(mapcar (lambda (c) `',c) choices)))
+
 (defmacro with-tree-leaves (tree test-form result-form)
   `(maptree (lambda (leaf) (if ,test-form ,result-form leaf)) ,tree))

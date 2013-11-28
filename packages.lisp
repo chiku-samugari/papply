@@ -8,7 +8,8 @@
 
 (defpackage :chiku-util-local
   (:use :cl)
-  (:export :with-gensyms :drop :take :flatten :with-tree-leaves :leaf))
+  (:export :with-gensyms :drop :take :flatten :with-tree-leaves :leaf :in
+           :inq))
 
 (defpackage :papply
   (:use :cl :chiku-util-local)
