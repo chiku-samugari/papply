@@ -1,11 +1,11 @@
 # PAPPLY - macros for partial application
 
 PAPPLY offers a shorthand form to write a partial
-application of fucntions. The semantics are simple, exact and visual.
+application of functions. The semantics are simple, exact and visual.
 There are three macros PAPPLY, APAPPLY and P and also a custom reader
-macro extention and its enabler function.
+macro extension and its enabler function.
 
-In PAPPLY, a special symbol `_` can be used to denotes an unspecified,
+In PAPPLY, a special symbol `_` can be used to denote an unspecified,
 or not-yet-fixed, value. You can specify the actual value in the
 later call.
 
@@ -37,8 +37,8 @@ Otherwise it is converted into APAPPLY form.
     ;=> (APAPPLY (LIST (LENGTH (STRING A0)) (FORMAT NIL "~a-index" A0)))
 
 Additionally, EXTEND-SHARP-QUOTE function is provided. It activates the
-exntension for #' reader macro that enables to write a function name after
-the left paren following to #' reader macro by convert such form into P macro
+extension for #' reader macro that enables to write a function name after
+the left parenthesis following to #' reader macro by convert such form into P macro
 call.
 
     #'(list (length (string a0)) (format nil "~a-index" a0))
@@ -62,7 +62,7 @@ Here is an BNF-ish definition of PAPPLY:
 ### Basic usage
 
 PAPPLY macro generates a function object by applying the first m arguments
-of `op` to `args` where m is the number of elemetns in `args` except a form
+of `op` to `args` where m is the number of elements in `args` except a form
 that includes symbol `_`.  Special symbol `_` works as the place holder for
 not-yet-fixed arguments. The nth `_` is replaced by the nth argument of the
 result function object.  The order is from left to right -- depth-first-order
@@ -90,7 +90,7 @@ the ordinary `cl:apply`.
 Both of them accepts some more variations. As described later,
 `op` can be a symbol `fbound` to a function or a symbol that is used as a
 lexical variable bound to a function object.
-Thus, all of the follwing:
+Thus, all of the followings:
 
     (papply (list 0 (1+ _)))
     (papply (#'list 0 (1+ _)))
@@ -110,10 +110,10 @@ Thus, all of the follwing:
 
 
 Symbols are valid to be specified as `op`. If a symbol is given to `op`,
-then normaly it is treated as a symbol that names a function. But if the
+then normally it is treated as a symbol that names a function. But if the
 symbol is a variable which is lexically bound, then it is treated as a
 variable. If one have to pass a function whose name is identical
-to such lexically bound symbol, use function object instaed of symbol
+to such lexically bound symbol, use function object instead of symbol
 (just put #' in front of the symbol).
 
 The special handling of lexical variable is available only in SBCL. A symbol
@@ -156,7 +156,7 @@ APAPPLY allows such sharings.
 
 An anaphoric variable available in APAPPLY
 is a symbol whose name is `A` followed by a non-negative integer,
-or whose name mathces to the regular expression below:
+or whose name matches to the regular expression below:
 
      A[1-9][0-9]* | A0
 
@@ -184,7 +184,7 @@ in `PAPPLY` and `APAPPLY` section.
 
 ### Detail
 
-P macro is a convinient interface for PAPPLY and APAPPLY macro. It is converted
+P macro is a convenient interface for PAPPLY and APAPPLY macro. It is converted
 into PAPPLY form if the special symbol `_` appears in the arguments. In other
 cases it is converted into APAPPLY form.
 
@@ -221,22 +221,22 @@ About the detail of P macro, see the section for P macro.
 
 ## miscellaneous
 
-One big dissapointing aspect of current PAPPLY implementation is the nested use
+One big disappointing aspect of current PAPPLY implementation is the nested use
 of PAPPLY forms. Its not supported. For PAPPLY it should be supported because
 the scope of `_` is clear.
 About APAPPLY macro on the other hand, I have no reasonable criteria to decide
-the scope of anaphoras. The inner APAPPLy could refer the anaphoras.
-And too much use of such APAPPLY harms the readbility. It seems interesting to
+the scope of anaphoras. The inner APAPPLY could refer the anaphoras.
+And too much use of such APAPPLY harms the readability. It seems interesting to
 study how to implement it, but practically, it will not used I guess.
 
-The second point is various formats. As it is explaind in the previous
+The second point is various formats. As it is explained in the previous
 chapters, it accepts 6 different formats. In my own programming activity, I
 only use form format.
 
 The third point is the operators other than functions. In Common Lisp, there
 are macros, special operators and lambda expressions. There is no worth to
 handle lambda expressions in PAPPLY. Macros and special operator can be worth
-to supprot.
+to support.
 
 ## Author and License
 
