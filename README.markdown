@@ -155,7 +155,7 @@ recognized as different arguments. Anaphoric variables introduced by
 APAPPLY allows such sharings.
 
 An anaphoric variable available in APAPPLY
-is a symbol whose name is `A` followed by a non-negative integer,
+is a symbol whose name starts with `A` followed by a non-negative integer,
 or whose name matches to the regular expression below:
 
      A[1-9][0-9]* | A0
