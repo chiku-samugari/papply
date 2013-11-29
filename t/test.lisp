@@ -39,6 +39,7 @@
     (test-many-forms equalp (list 5 (1+ i) "THING" (* (1+ i) 3))
                      apapply list ((length (string a0)) a1 (symbol-name a0) (* a1 3))
                      'thing (incf i))
+    ;; checks if (incf i) is evaluated exactly 4 times.
     (is (= i 4))))
 
 
@@ -59,7 +60,7 @@
   (let ((list #'vector))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; (papply list ...) .
-    ;; the function is dynamically bound to #'vector,
+    ;; the variable `list' is dynamically bound to #'vector,
     ;; so each result should be a vector.
 
     (test-dynamic-forms equalp #(5 5)
