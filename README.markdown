@@ -1,7 +1,7 @@
 # PAPPLY - macros for partial application
 
 PAPPLY offers a shorthand form to write a partial
-application of functions. The semantics are simple, exact and visual.
+application of a function. The semantics are simple, exact and visual.
 There are three macros PAPPLY, APAPPLY and P and also a custom reader
 macro extension and its enabler function.
 
@@ -12,7 +12,7 @@ later call.
     (papply (list (1+ _) (parse-integer _)))
     
     ;=> #'(LAMBDA (#:P0 #:P1 &REST #:REST0)
-             (APPLY #'LIST (1+ #:P0) (STRING #:P1) #:REST0))
+             (APPLY #'LIST (1+ #:P0) (PARSE-INTEGER #:P1) #:REST0))
              
     (funcall * 3 "10")
     
