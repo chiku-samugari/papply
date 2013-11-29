@@ -54,31 +54,32 @@
      (test-form-form ,criteria ,expected ,kind ,op ,rest1 ,@rest2)
      (test-listup-form ,criteria ,expected ,kind ,op ,rest1 ,@rest2)))
 
+(defvar *list*)
 
-(test :dynamic
+(test :variable
   #+sbcl
   (let ((list #'vector))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; (papply list ...) .
-    ;; the variable `list' is dynamically bound to #'vector,
+    ;; the variable `list' is bound to #'vector,
     ;; so each result should be a vector.
 
     (test-dynamic-forms equalp #(5 5)
-                     papply list (_ 5)
-                     5)
+                        papply list (_ 5)
+                        5)
     (test-dynamic-forms equalp #((a b c) (d (e f) g h i) j)
-                     papply list ((list _ _ _) (list _ (list _ _) _ _ _) _)
-                     'a 'b 'c 'd 'e 'f 'g 'h 'i 'j)
+                        papply list ((list _ _ _) (list _ (list _ _) _ _ _) _)
+                        'a 'b 'c 'd 'e 'f 'g 'h 'i 'j)
     (test-dynamic-forms equalp #(4 10)
-                     papply list ((1+ _) (parse-integer _))
-                     3 "10")
+                        papply list ((1+ _) (parse-integer _))
+                        3 "10")
     (test-dynamic-forms equalp #(5 "THING")
-                     apapply list ((length (string a0)) (symbol-name a0))
-                     'thing)
+                        apapply list ((length (string a0)) (symbol-name a0))
+                        'thing)
     (let ((i 0))
       (test-dynamic-forms equalp (vector 5 (1+ i) "THING" (* (1+ i) 3))
-                       apapply list ((length (string a0)) a1 (symbol-name a0) (* a1 3))
-                       'thing (incf i))
+                          apapply list ((length (string a0)) a1 (symbol-name a0) (* a1 3))
+                          'thing (incf i))
       (is (= i 2)))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -87,24 +88,73 @@
     ;; each result should be a list.
 
     (test-fn-forms equalp '(5 5)
-                     papply list (_ 5)
-                     5)
+                   papply list (_ 5)
+                   5)
     (test-fn-forms equalp '((a b c) (d (e f) g h i) j)
-                     papply list ((list _ _ _) (list _ (list _ _) _ _ _) _)
-                     'a 'b 'c 'd 'e 'f 'g 'h 'i 'j)
+                   papply list ((list _ _ _) (list _ (list _ _) _ _ _) _)
+                   'a 'b 'c 'd 'e 'f 'g 'h 'i 'j)
     (test-fn-forms equalp '(4 10)
-                     papply list ((1+ _) (parse-integer _))
-                     3 "10")
+                   papply list ((1+ _) (parse-integer _))
+                   3 "10")
     (test-fn-forms equalp '(5 "THING")
-                     apapply list ((length (string a0)) (symbol-name a0))
-                     'thing)
+                   apapply list ((length (string a0)) (symbol-name a0))
+                   'thing)
     (let ((i 0))
       (test-fn-forms equalp (list 5 (1+ i) "THING" (* (1+ i) 3))
-                       apapply list ((length (string a0)) a1 (symbol-name a0) (* a1 3))
-                       'thing (incf i))
-      (is (= i 2)))))
+                     apapply list ((length (string a0)) a1 (symbol-name a0) (* a1 3))
+                     'thing (incf i))
+      (is (= i 2))))
 
-(test :lexical
+  (let ((*list* #'vector))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; (papply list ...) .
+    ;; the variable `list' is bound to #'vector,
+    ;; so each result should be a vector.
+
+    (test-dynamic-forms equalp #(5 5)
+                        papply *list* (_ 5)
+                        5)
+    (test-dynamic-forms equalp #((a b c) (d (e f) g h i) j)
+                        papply *list* ((list _ _ _) (list _ (list _ _) _ _ _) _)
+                        'a 'b 'c 'd 'e 'f 'g 'h 'i 'j)
+    (test-dynamic-forms equalp #(4 10)
+                        papply *list* ((1+ _) (parse-integer _))
+                        3 "10")
+    (test-dynamic-forms equalp #(5 "THING")
+                        apapply *list* ((length (string a0)) (symbol-name a0))
+                        'thing)
+    (let ((i 0))
+      (test-dynamic-forms equalp (vector 5 (1+ i) "THING" (* (1+ i) 3))
+                          apapply *list* ((length (string a0)) a1 (symbol-name a0) (* a1 3))
+                          'thing (incf i))
+      (is (= i 2))))
+
+  (setf *list* #'vector)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; (papply list ...) .
+  ;; the variable `list' is bound to #'vector,
+  ;; so each result should be a vector.
+
+  (test-dynamic-forms equalp #(5 5)
+                      papply *list* (_ 5)
+                      5)
+  (test-dynamic-forms equalp #((a b c) (d (e f) g h i) j)
+                      papply *list* ((list _ _ _) (list _ (list _ _) _ _ _) _)
+                      'a 'b 'c 'd 'e 'f 'g 'h 'i 'j)
+  (test-dynamic-forms equalp #(4 10)
+                      papply *list* ((1+ _) (parse-integer _))
+                      3 "10")
+  (test-dynamic-forms equalp #(5 "THING")
+                      apapply *list* ((length (string a0)) (symbol-name a0))
+                      'thing)
+  (let ((i 0))
+    (test-dynamic-forms equalp (vector 5 (1+ i) "THING" (* (1+ i) 3))
+                        apapply *list* ((length (string a0)) a1 (symbol-name a0) (* a1 3))
+                        'thing (incf i))
+    (is (= i 2)))
+  (setf *list* nil))
+
+(test :fbinding
   (flet ((my-list (&rest args) (apply #'vector args)))
     (test-many-forms equalp (vector 5 5)
                      papply my-list (_ 5)
