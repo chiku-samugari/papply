@@ -20,4 +20,5 @@
   :serial t
   :components ((:file "packages")
                (:file "chiku-util-local")
-               (:file "papply")))
+               (:file "papply"))
+  :in-order-to ((test-op (load-op papply-test))))
