@@ -24,7 +24,6 @@ APAPPLY is similar but only accepts anaphoric variables instead of
 Those values are evaluated once only
 and the values can be reused many times in a template.
 A symbol `A<n>` (n is a number) is going to be the nth parameter of generated function object.
-*TODO --- what happens if there are missing n?*
 
     (apapply (list (length (string a0)) (format nil "~a-index" a0)))
     ;=> #'(LAMBDA (A0 &REST #:REST0)
@@ -137,29 +136,34 @@ LAMBDA expression instead of PAPPLY macro can be better in such case.
 
 ## Macro APAPPLY
 
-    p (op &rest args) => function
-    p op &rest args => function
-    op : a symbol or a function object.
-    args : objects.
-    function : a function object.
+Other definitions being equal to PAPPLY, the BNF-ish definition of
+APAPPLY semantics follow:
+
+    (apapply (<op> <a-arg>*)) => function
+    (apapply <op> <a-arg>*) => function
+    <a-arg>    := <anaphoric> | <a-arg> | <form>
+    <anaphoric> := A[1-9][0-9]* | A0   --- case insensitive
 
 ### Detail
 
-APAPPLY is an upper compatible version of PAPPLY. It allows to use anaphoric
-variables (anaphoras) in the `args` argument instead of `_` symbol. Since
-anaphoras have name, one anaphora can be used multiple times. In PAPPLY, one
-not-fixed argument (expressed by `_` symbol) cannot be used multiple times
-because different appearance of `_` is recognized as different arguments.
+APAPPLY is an upper compatible version of PAPPLY. It accepts anaphoric
+variables (anaphoras) instead of symbol `_`. 
 
-The anaphoras is a symbol whose name is `A` followed by a non-negative integer.
-In other words, a symbol whose name mathces to the regular expression below.
+In PAPPLY, the value of an not-fixed argument (symbol `_`) is not
+shared between variables because different appearance of `_` is
+recognized as different arguments. Anaphoric variables introduced by
+APAPPLY allows such sharings.
 
-     A[1-9][0-9]*|A0
+An anaphoric variable available in APAPPLY
+is a symbol whose name is `A` followed by a non-negative integer,
+or whose name mathces to the regular expression below:
 
-All the symbols that fulfills this condition is recognized as anaphoras even if
-they are desultory indexed. All anaphoras are sorted by its index in the
+     A[1-9][0-9]* | A0
+
+The index of the symbols can be desultory.
+All anaphoras are sorted by its index in the
 ascending order and used as the parameter of returned function.
-Therefore, the returned functions from next 2 forms behave identical.
+Therefore, the behaviors of the resulting functions below are identical.
 
     (apapply (list a0 (mod a0 a1) (/ a0 a1)))
     ;=> #'(LAMBDA (A0 A1 &REST #:REST0)
@@ -169,16 +173,14 @@ Therefore, the returned functions from next 2 forms behave identical.
     ;=> #'(LAMBDA (A20 A7 &REST #:REST0)
             (APPLY #'LIST A7 (MOD A7 A20) (/ A7 A20) #:REST0))
 
-The format of its arguments (`op` and `args`) is identical to that of PAPPLY.
-Please see the chapter for PAPPLY.
-
 ## Macro P
 
-    p (op &rest args) => function
-    p op &rest args => function
-    op : a symbol or a function object.
-    args : objects.
-    function : a function object.
+    (p (<op> <p-args>)) => function
+    (p <op> <p-args>) => function
+    <p-args>    := <a-arg>* | <arg>*
+
+The formal definitions of `<arg>` and `<a-arg>` are already described
+in `PAPPLY` and `APAPPLY` section.
 
 ### Detail
 
@@ -191,8 +193,9 @@ cases it is converted into APAPPLY form.
     (p (list (length (string a0)) (format nil "~a-index" a0)))
     ;=> (APAPPLY (LIST (LENGTH (STRING A0)) (FORMAT NIL "~a-index" A0)))
 
-If both of `_` and anaphora candidates (symbol whose name is `An` where n is a
-number) is used, it is converted into PAPPLY and no anaphoras are introduced.
+If both `_` and anaphora candidates (symbol whose name is `An` where n is a
+number) is used, it is converted into PAPPLY and no anaphoras are
+introduced -- they will just be treated as ordinary lexical variables.
 
     (p (list (1+ _) (string a0)))
     ;=> (PAPPLY (LIST (1+ _) (STRING A0)))
