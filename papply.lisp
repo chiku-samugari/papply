@@ -126,6 +126,7 @@
                (symbolp (car expr))
                (not (inq (car expr)
                          cl:lambda
+                         cl:setf
                          #+sbcl sb-int:named-lambda)))
         `(p ,@expr)
         `(function ,expr)))))
