@@ -24,7 +24,7 @@
       #+sbcl (sb-cltl2:variable-information name env)
       nil)))
 
-(defmacro papply-listup-format (fn &rest args &environment env)
+(defmacro papply-enumerate-format (fn &rest args &environment env)
   (let* ((gensym-lst)
          (body (with-tree-leaves args (eq leaf '_)
                  (car (push (gensym "PARG") gensym-lst)))))
@@ -37,7 +37,7 @@
            ,@body ,not-applied-args)))))
 
 (defmacro papply-form-format ((op &rest args))
-  `(papply-listup-format ,op ,@args))
+  `(papply-enumerate-format ,op ,@args))
 
 (defmacro papply (&rest op-and-args)
   " papply (op &rest args) => function ;{{{
@@ -63,7 +63,7 @@
         (apply #'list param0 (1+ param1) 'a restparams))
   ;}}}"
   (cond ((or (atom (car op-and-args)) (eq (caar op-and-args) 'function))
-         `(papply-listup-format ,(car op-and-args) ,@(cdr op-and-args)))
+         `(papply-enumerate-format ,(car op-and-args) ,@(cdr op-and-args)))
         (t `(papply-form-format ,@op-and-args))))
 
 ;;; APAPPLY
@@ -90,7 +90,7 @@
                              (flatten tree)))
             #'string<= :key #'symbol-name)))
 
-(defmacro apapply-listup-format (op &rest args &environment env)
+(defmacro apapply-enumerate-format (op &rest args &environment env)
   (with-gensyms (not-applied-args)
     `(lambda (,@(anaphora-list args) &rest ,not-applied-args)
        (apply ,(if (and (symbolp op) (not (lexically-bound-p op env)))
@@ -99,12 +99,12 @@
               ,@args ,not-applied-args))))
 
 (defmacro apapply-form-format ((op &rest args))
-  `(apapply-listup-format ,op ,@args))
+  `(apapply-enumerate-format ,op ,@args))
 
 (defmacro apapply (&rest op-and-args)
   (cond ((or (atom (car op-and-args))
              (eq (caar op-and-args) 'function))
-         `(apapply-listup-format ,(car op-and-args) ,@(cdr op-and-args)))
+         `(apapply-enumerate-format ,(car op-and-args) ,@(cdr op-and-args)))
         (t `(apapply-form-format ,@op-and-args))))
 
 (defmacro p (&rest op-and-args)
