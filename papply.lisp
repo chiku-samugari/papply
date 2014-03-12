@@ -24,6 +24,22 @@
       #+sbcl (sb-cltl2:variable-information name env)
       nil)))
 
+(defun construct-body (op not-applied-args body env)
+  (if (and (symbolp op) (not (lexically-bound-p op env)))
+    (if (or (macro-function op) (special-operator-p op))
+      `(,op ,@body)
+      `(apply #',op ,@body ,not-applied-args))
+    `(apply ,op ,@body ,not-applied-args)))
+
+(defmacro papply-enumerate-format (op &rest args &environment env)
+  (let* ((gensym-lst)
+         (body (with-tree-leaves args (eq leaf '_)
+                 (car (push (gensym "PARG") gensym-lst)))))
+    (with-gensyms (not-applied-args)
+      `(lambda (,@(nreverse gensym-lst) &rest ,not-applied-args)
+         (declare (ignorable ,not-applied-args))
+         ,(construct-body op not-applied-args body env)))))
+
 (defmacro papply-enumerate-format (op &rest args &environment env)
   (let* ((gensym-lst)
          (body (with-tree-leaves args (eq leaf '_)
@@ -93,10 +109,8 @@
 (defmacro apapply-enumerate-format (op &rest args &environment env)
   (with-gensyms (not-applied-args)
     `(lambda (,@(anaphora-list args) &rest ,not-applied-args)
-       (apply ,(if (and (symbolp op) (not (lexically-bound-p op env)))
-                 `#',op
-                 op)
-              ,@args ,not-applied-args))))
+       (declare (ignorable ,not-applied-args))
+       ,(construct-body op not-applied-args body env))))
 
 (defmacro apapply-form-format ((op &rest args))
   `(apapply-enumerate-format ,op ,@args))
