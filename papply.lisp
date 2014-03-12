@@ -24,16 +24,16 @@
       #+sbcl (sb-cltl2:variable-information name env)
       nil)))
 
-(defmacro papply-enumerate-format (fn &rest args &environment env)
+(defmacro papply-enumerate-format (op &rest args &environment env)
   (let* ((gensym-lst)
          (body (with-tree-leaves args (eq leaf '_)
                  (car (push (gensym "PARG") gensym-lst)))))
     (with-gensyms (not-applied-args)
       `(lambda (,@(nreverse gensym-lst) &rest ,not-applied-args)
          (apply
-           ,(if (and (symbolp fn) (not (lexically-bound-p fn env)))
-              `#',fn
-              fn)
+           ,(if (and (symbolp op) (not (lexically-bound-p op env)))
+              `#',op
+              op)
            ,@body ,not-applied-args)))))
 
 (defmacro papply-form-format ((op &rest args))
