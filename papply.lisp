@@ -98,7 +98,7 @@
   (with-gensyms (not-applied-args)
     `(lambda (,@(anaphora-list args) &rest ,not-applied-args)
        (declare (ignorable ,not-applied-args))
-       ,(construct-body op not-applied-args body env))))
+       ,(construct-body op not-applied-args args env))))
 
 (defmacro apapply-form-format ((op &rest args))
   `(apapply-enumerate-format ,op ,@args))
