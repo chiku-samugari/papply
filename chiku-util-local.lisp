@@ -7,7 +7,11 @@
 (in-package :chiku-util-local)
 
 (defmacro with-gensyms ((&rest names) &body body)
-  `(let ,(loop for n in names collect `(,n (gensym)))
+  `(let ,(loop for n in names collect
+          (let ((name n))
+            (if (atom name)
+              `(,name (gensym ,(symbol-name name)))
+              `(,(car name) (gensym (or ,(cadr name) "G"))))))
      ,@body))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
@@ -28,8 +32,8 @@
 
 (defmacro in (obj &rest choices)
   (with-gensyms (insym)
-                `(let ((,insym ,obj))
-                   (or ,@(mapcar (lambda (c) `(eql ,insym ,c)) choices)))))
+    `(let ((,insym ,obj))
+       (or ,@(mapcar (lambda (c) `(eql ,insym ,c)) choices)))))
 
 (defmacro inq (obj &rest choices)
   `(in ,obj ,@(mapcar (lambda (c) `',c) choices)))
