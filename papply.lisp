@@ -40,18 +40,6 @@
          (declare (ignorable ,not-applied-args))
          ,(construct-body op not-applied-args body env)))))
 
-(defmacro papply-enumerate-format (op &rest args &environment env)
-  (let* ((gensym-lst)
-         (body (with-tree-leaves args (eq leaf '_)
-                 (car (push (gensym "PARG") gensym-lst)))))
-    (with-gensyms (not-applied-args)
-      `(lambda (,@(nreverse gensym-lst) &rest ,not-applied-args)
-         (apply
-           ,(if (and (symbolp op) (not (lexically-bound-p op env)))
-              `#',op
-              op)
-           ,@body ,not-applied-args)))))
-
 (defmacro papply-form-format ((op &rest args))
   `(papply-enumerate-format ,op ,@args))
 
