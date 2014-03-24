@@ -5,7 +5,7 @@
 ;;; License: MIT License
 (in-package :papply)
 
-(eval-when (:compile-toplevel :execute)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   #+sbcl (require :sb-cltl2))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
