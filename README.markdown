@@ -203,21 +203,20 @@ About the detail of P macro, see the section for P macro.
 ## miscellaneous
 
 One big disappointing aspect of current PAPPLY implementation is the nested use
-of PAPPLY forms. Its not supported. For PAPPLY it should be supported because
+of PAPPLY forms. It's not supported. For PAPPLY it should be supported because
 the scope of `_` is clear.
 About APAPPLY macro on the other hand, I have no reasonable criteria to decide
 the scope of anaphoras. The inner APAPPLY could refer the anaphoras.
 And too much use of such APAPPLY harms the readability. It seems interesting to
-study how to implement it, but practically, it will not used I guess.
+study how to implement it, but practically, it will not be used I guess.
 
 The second point is various formats. As it is explained in the previous
 chapters, it accepts 6 different formats. In my own programming activity, I
 only use form format.
 
-The third point is the operators other than functions. In Common Lisp, there
-are macros, special operators and lambda expressions. There is no worth to
-handle lambda expressions in PAPPLY. Macros and special operator can be worth
-to support.
+The third point is the combination of the extended `#'` and the SETF
+operator. It is not working correctly for now because I completely
+forgot that (SETF FOO) is also a varid function name in Common Lisp.
 
 ## Author and License
 
