@@ -214,10 +214,6 @@ The second point is various formats. As it is explained in the previous
 chapters, it accepts 6 different formats. In my own programming activity, I
 only use form format.
 
-The third point is the combination of the extended `#'` and the SETF
-operator. It is not working correctly for now because I completely
-forgot that (SETF FOO) is also a varid function name in Common Lisp.
-
 ## Author and License
 
 Author : chiku (Takehiko Nawata, samugari.penguin@gmail.com)
