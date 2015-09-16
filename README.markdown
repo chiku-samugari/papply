@@ -212,7 +212,7 @@ study how to implement it, but practically, it will not be used I guess.
 
 The second point is various formats. As it is explained in the previous
 chapters, it accepts 6 different formats. In my own programming activity, I
-only use form format.
+only use the form format.
 
 ## Author and License
 

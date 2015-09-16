@@ -74,8 +74,8 @@
 ;;; APAPPLY
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defun anaphorap (sym)
-    " Retruns T if the name of the given symbol ``SYM'' is
-     a member of following regular language:
+    " Retruns T if the name of the given symbol ``SYM'' is a member of
+     following regular language:
      A[1-9][0-9]*|A0
      "
     (let ((name (symbol-name sym)))
@@ -87,9 +87,9 @@
                (not (char= (elt name 1) #\0))))))
 
     (defun anaphora-list (tree)
-      " Returns a list that is composed of symbols whose ANAPHORAP check is T.
-       Each symbol appears only once in the list and the list is sorted by the name.
-       "
+      " Returns a list that is composed of symbols whose ANAPHORAP check
+       is T. Each symbol appears only once in the list and the list is
+       sorted by the name."
       (sort (remove-duplicates
               (remove-if-not (lambda (sym) (and (symbolp sym) (anaphorap sym)))
                              (flatten tree)))
