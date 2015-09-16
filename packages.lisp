@@ -9,7 +9,7 @@
 (defpackage :chiku-util-local
   (:use :cl)
   (:export :with-gensyms :drop :take :flatten :with-tree-leaves :leaf :in
-           :inq))
+           :inq :filter))
 
 (defpackage :papply
   (:use :cl :chiku-util-local)
