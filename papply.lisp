@@ -58,7 +58,7 @@
     result function object.  The order is from left to right. In other terminology,
     depth-first-order.
     For example,
-    
+
         (papply (list _ (1+ _) 'a))
 
     is converted into a lambda expression behaves same as following lambda

@@ -19,5 +19,5 @@
   :long-description "Macro family for partial application of fucntions."
   :serial t
   :components ((:file "packages")
-               (:file "chiku-util-local")
+               (:file "util")
                (:file "papply")))

@@ -25,7 +25,7 @@
                      ((atom tree) (cons tree acc))
                      (t (rec (car tree) (rec (cdr tree) acc))))))
       (rec tree nil)))
-  
+
   (defun maptree (func tree &key (pred #'atom))
     (if (funcall pred tree) (funcall func tree)
       (mapcar #'(lambda (x) (maptree func x :pred pred)) tree))))
