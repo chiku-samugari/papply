@@ -6,11 +6,11 @@
 ;;; License: MIT License
 (in-package :cl-user)
 
-(defpackage :chiku-util-local
+(defpackage :papply.util
   (:use :cl)
   (:export :with-gensyms :drop :take :flatten :with-tree-leaves :leaf :in
            :inq :filter))
 
 (defpackage :papply
-  (:use :cl :chiku-util-local)
+  (:use :cl :papply.util)
   (:export :papply :_ :apapply :p :extend-sharp-quote))

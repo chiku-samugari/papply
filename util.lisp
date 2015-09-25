@@ -4,7 +4,7 @@
 ;;;
 ;;; Author: chiku (Takehiko Nawata samugari.penguin@gmail.com)
 ;;; License: MIT License
-(in-package :chiku-util-local)
+(in-package :papply.util)
 
 (defmacro with-gensyms ((&rest names) &body body)
   `(let ,(loop for n in names collect
