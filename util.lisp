@@ -44,6 +44,6 @@
 (defun filter (fn &rest lsts)
   (let ((acc nil))
     (dolist (args (apply #'mapcar #'list lsts) (nreverse acc))
-        (let ((it (apply fn args)))
-          (if it
-            (push it acc))))))
+        (let ((filtered (apply fn args)))
+          (if filtered
+            (push filtered acc))))))

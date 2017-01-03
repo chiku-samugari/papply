@@ -12,5 +12,5 @@
            :inq :filter))
 
 (defpackage :papply
-  (:use :cl :papply.util)
+  (:use :cl :azuki :papply.util)
   (:export :papply :_ :apapply :p :extend-sharp-quote))

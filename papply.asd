@@ -12,6 +12,7 @@
   :license "MIT License"
   :description "PAPPLY"
   :long-description "Macro family for partial application of fucntions."
+  :depends-on (:azuki)
   :serial t
   :components ((:file "packages")
                (:file "util")
