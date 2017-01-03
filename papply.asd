@@ -4,11 +4,6 @@
 ;;;
 ;;; Author: chiku (Takehiko Nawata, samugari.penguin@gmail.com)
 ;;; License: MIT License
-(defpackage :papply.asd
-  (:use :cl :asdf))
-
-(in-package :papply.asd)
-
 (defsystem papply
   :name "PAPPLY"
   :version "0.8.0"
