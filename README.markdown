@@ -134,7 +134,7 @@ anaphoras have name, one anaphora can be used multiple times. In PAPPLY, one
 not-fixed argument (expressed by `_` symbol) cannot be used multiple times
 because different appearance of `_` is recognized as different arguments.
 
-The anaphoras is a symbol whose name is `A` followed by a non-negative integer.
+An anaphora is a symbol whose name is `A` followed by a non-negative integer.
 In other words, a symbol whose name mathces to the regular expression below.
 
      A[1-9][0-9]* | A0
@@ -185,18 +185,18 @@ introduced -- they will just be treated as ordinary lexical variables.
 
 ## Function EXTEND-SHARP-QUOTE
 
-It enables an extension of #' reader macro. The built-in #' reader macro
-does not allow us to write a function name after the left parenthesis following
-to #'. The only thing we can write at that position is the symbol LAMBDA.
-The extension activated by this function allows us to write arbitrary function
-by converting such form into P macro call form.
+It enables an extension of #' reader macro. The built-in #' reader macro does
+not allow us to write a function name after the left parenthesis following to #'.
+The only thing we can write at that position is the symbol LAMBDA and SETF. The
+extension activated by this function allows us to write arbitrary function by
+converting such form into P macro call form.
 
     #'(list 1 _ 3)
     ; => (P LIST 1 _ 3)
 
 This extension never harms the behavior of built-in #' reader macro because it
-does not convert the LAMBDA expression into P macro call form. It just utilizes
-the unused room of the reader macro.
+does not convert the LAMBDA forms and SETF forms into P macro call form. It just
+utilizes the unused room of the reader macro.
 
 About the detail of P macro, see the section for P macro.
 
