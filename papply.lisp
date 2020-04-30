@@ -45,7 +45,7 @@
   `(papply-enumerate-format ,op ,@args))
 
 (defmacro papply (&rest op-and-args)
-  " papply (op &rest args) => function ;{{{
+  " papply (op &rest args) => function
     papply op &rest args => function
     op : a symbol or a function object.
     args : objects.
@@ -66,7 +66,7 @@
 
     #'(lambda (param0 param1 &rest restparams)
         (apply #'list param0 (1+ param1) 'a restparams))
-  ;}}}"
+  "
   (cond ((or (atom (car op-and-args)) (eq (caar op-and-args) 'function))
          `(papply-enumerate-format ,(car op-and-args) ,@(cdr op-and-args)))
         (t `(papply-form-format ,@op-and-args))))
