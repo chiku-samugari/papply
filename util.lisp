@@ -38,8 +38,8 @@
 (defmacro inq (obj &rest choices)
   `(in ,obj ,@(mapcar (lambda (c) `',c) choices)))
 
-(defmacro with-tree-leaves (tree test-form result-form)
-  `(maptree (lambda (leaf) (if ,test-form ,result-form leaf)) ,tree))
+(defmacro with-tree-leaves (tree test-form &body body)
+  `(maptree (lambda (leaf) (if ,test-form (progn ,@body) leaf)) ,tree))
 
 (defun filter (fn &rest lsts)
   (let ((acc nil))
