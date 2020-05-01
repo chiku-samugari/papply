@@ -51,13 +51,13 @@
     args : objects.
     function : a function object.
 
-    PAPPLY macro generates a function object by applying the first m arguments
-    of `op` to `args` where m is the number of elemetns in `args` except a form
-    that includes symbol `_`.  Special symbol `_` works as the place holder for
-    not-yet-fixed arguments. The nth `_` is replaced by the nth argument of the
-    result function object.  The order is from left to right. In other terminology,
-    depth-first-order.
-    For example,
+    PAPPLY macro generates a function object by applying the first m
+    arguments of `op` to `args` where m is the number of elemetns in
+    `args` except a form that includes symbol `_`. The special symbol
+    `_` works as the place holder for not-yet-fixed arguments. The nth
+    `_` is replaced by the nth argument of the result function object.
+    The order is from left to right; depth-first-order.
+     For example,
 
         (papply (list _ (1+ _) 'a))
 
