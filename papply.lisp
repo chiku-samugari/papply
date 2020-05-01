@@ -64,8 +64,8 @@
     is converted into a lambda expression behaves same as following lambda
     expression.
 
-    #'(lambda (param0 param1 &rest restparams)
-        (apply #'list param0 (1+ param1) 'a restparams))
+    (lambda (x y &rest restparams)
+      (apply #'list x (1+ y) 'a restparams))
   "
   (cond ((or (atom (car op-and-args)) (eq (caar op-and-args) 'function))
          `(papply-enumerate-format ,(car op-and-args) ,@(cdr op-and-args)))
