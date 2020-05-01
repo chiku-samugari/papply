@@ -44,7 +44,7 @@
 (defmacro papply-form-format ((op &rest args))
   `(papply-enumerate-format ,op ,@args))
 
-(defmacro papply (&rest op-and-args)
+(defmacro papply (op &rest args)
   " papply (op &rest args) => function
     papply op &rest args => function
     op : a symbol or a function object.
@@ -67,9 +67,9 @@
     (lambda (x y &rest restparams)
       (apply #'list x (1+ y) 'a restparams))
   "
-  (cond ((or (atom (car op-and-args)) (eq (caar op-and-args) 'function))
-         `(papply-enumerate-format ,(car op-and-args) ,@(cdr op-and-args)))
-        (t `(papply-form-format ,@op-and-args))))
+  (cond ((or (atom op) (eq (car op) 'function))
+         `(papply-enumerate-format ,op ,@args))
+        (t `(papply-form-format ,op ,@args))))
 
 ;;; APAPPLY
 (eval-when (:load-toplevel :compile-toplevel :execute)
