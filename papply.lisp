@@ -5,8 +5,6 @@
 ;;; License: MIT License
 (in-package :papply)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  #+sbcl (require :sb-cltl2))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defun underscore-included-p (tree)
@@ -14,15 +12,12 @@
           ((atom tree) nil)
           (t (some #'underscore-included-p tree))))
 
-  (defun count-underscore (tree)
-    (let ((c 0))
-      (with-tree-leaves tree (eq leaf '_) (incf c))
-      c))
-
-  (defun lexically-bound-p (name env)
-    (or
-      #+sbcl (sb-cltl2:variable-information name env)
-      nil)))
+  (defun embody-template (template)
+    (let* (concrete-symbols
+           (embodied (with-tree-leaves template (eq leaf '_)
+                       (push (gensym "PARG") concrete-symbols)
+                       (car concrete-symbols))))
+      (values embodied (nreverse concrete-symbols)))))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   (defun construct-body (op not-applied-args body env)
@@ -32,44 +27,79 @@
         `(apply #',op ,@body ,not-applied-args))
       `(apply ,op ,@body ,not-applied-args))))
 
-(defmacro papply-enumerate-format (op &rest args &environment env)
-  (let* ((gensym-lst)
-         (body (with-tree-leaves args (eq leaf '_)
-                 (car (push (gensym "PARG") gensym-lst)))))
-    (with-gensyms (not-applied-args)
-      `(lambda (,@(nreverse gensym-lst) &rest ,not-applied-args)
-         (declare (ignorable ,not-applied-args))
-         ,(construct-body op not-applied-args body env)))))
+(defmacro papply-function (fn &rest args)
+  (multiple-value-bind (embodied-args params) (embody-template args)
+    (with-gensyms (more-args)
+      `(lambda (,@params &rest ,more-args)
+         (declare (ignorable ,more-args))
+         (apply ,fn ,@embodied-args ,more-args)))))
 
-(defmacro papply-form-format ((op &rest args))
-  `(papply-enumerate-format ,op ,@args))
+;;; Even though this macro is not exported for now, it might be because
+;;; PAPPLY mixes 2 different format and that might be irritating and/or
+;;; troublesome. In that situation this macro must accept the actual
+;;; form format:
+;;;
+;;;   (papply-form (list 0 _ 1))
+;;;
+;;; The parameter construction should not be changed therefore.
+(defmacro papply-form ((op &rest forms))
+  (multiple-value-bind (embodied-args params) (embody-template forms)
+    (if (and (symbolp op)
+             (or (macro-function op) (special-operator-p op)))
+      `(lambda (,@params)
+         (,op ,@embodied-args))
+      (with-gensyms (more-args)
+        `(lambda (,@params &rest ,more-args)
+           (declare (ignorable ,more-args))
+           (apply (function ,op) ,@embodied-args ,more-args))))))
 
-(defmacro papply (op &rest args)
-  " papply (op &rest args) => function
-    papply op &rest args => function
-    op : a symbol or a function object.
-    args : objects.
-    function : a function object.
+(defmacro papply (fn &rest args)
+  " papply fn &rest args => function
+    papply form => function
+    fn: a function.
+    args: objects.
+    form: a form.
+    function : a partially applied function.
 
-    PAPPLY macro generates a function object by applying the first m
-    arguments of `op` to `args` where m is the number of elemetns in
-    `args` except a form that includes symbol `_`. The special symbol
-    `_` works as the place holder for not-yet-fixed arguments. The nth
-    `_` is replaced by the nth argument of the result function object.
-    The order is from left to right; depth-first-order.
-     For example,
+   PAPPLY macro generates a partially applied function. In the first
+  format, `fn` must be a variable that is bound to a function or a
+  CL:FUNCTION form and PAPPLY generates a partially applied function of
+  the function whose first m arguments are partially applied. Here, m is
+  the number of elemetns in `args` except forms that includes the symbol
+  `_`. The special symbol `_` works as the place holder for arguments
+  that are not yet fixed. The kth `_` is replaced by the kth parameter
+  of the result partially applied function. The order is from left to
+  right; depth-first-order.
 
-        (papply (list _ (1+ _) 'a))
+   In the second format, the first argument `form` should be a form and
+  it is interpreted as follows:
 
-    is converted into a lambda expression behaves same as following lambda
-    expression.
+     (op &rest forms)
 
-    (lambda (x y &rest restparams)
-      (apply #'list x (1+ y) 'a restparams))
+  `op` must be a symbol that names a function, a macro, or a special
+  operator and PAPPLY generates an n-ary function where n is the number
+  of the appearance of `_` in `forms`. The body of the generated
+  function is a list whose CAR is `op` and CDR is `forms` but all the
+  place holders `_` are replaced by parameters of the function.
+  Similraly to the first format, the kth appearance of `_` is replaced
+  by the kth parameter of the generated function. The rest parameter
+  `args` is not used in this format.
+
+   For example,
+
+      (papply #'list _ (1+ _) 'a)     ; First format
+      (papply (list _ (1+ _) 'a))     ; Second format
+
+  are both converted into a lambda expression behaves same as the
+  following lambda expression.
+
+      (lambda (x y &rest restparams)
+        (apply #'list x (1+ y) 'a restparams))
   "
-  (cond ((or (atom op) (eq (car op) 'function))
-         `(papply-enumerate-format ,op ,@args))
-        (t `(papply-form-format ,op ,@args))))
+  (if (or (symbolp fn)
+          (and (consp fn) (eq (car fn) 'cl:function)))
+    `(papply-function ,fn ,@args)
+    `(papply-form ,fn)))
 
 ;;; APAPPLY
 (eval-when (:load-toplevel :compile-toplevel :execute)
