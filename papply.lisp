@@ -108,25 +108,25 @@
                ;; Disables padding 0
                (not (char= (elt name 1) #\0))))))
 
-    (defun unquotedp (obj)
-      #+sbcl
-      (if (sb-impl::comma-p obj)
-        (values t (sb-impl::comma-expr obj))))
+  (defun unquotedp (obj)
+    #+sbcl
+    (if (sb-impl::comma-p obj)
+      (values t (sb-impl::comma-expr obj))))
 
-    (defun anaphora-list (tree)
-      " Returns a list that is composed of symbols whose ANAPHORAP check
-       is T. Each symbol appears only once in the list and the list is
-       sorted by the name."
-      (labels ((collect (tree)
-                 (filter (lambda (obj)
-                           (or (and (symbolp obj) (anaphorap obj) obj)
-                               #+sbcl
-                               (multiple-value-bind (? expr)
-                                 (unquotedp obj)
-                                 (and ? (collect expr)))))
-                         (flatten tree))))
-        (sort (remove-duplicates (flatten (collect tree)))
-              #'string<= :key #'symbol-name))))
+  (defun anaphora-list (tree)
+    " Returns a list that is composed of symbols whose ANAPHORAP check
+     is T. Each symbol appears only once in the list and the list is
+     sorted by the name."
+    (labels ((collect (tree)
+               (filter (lambda (obj)
+                         (or (and (symbolp obj) (anaphorap obj) obj)
+                             #+sbcl
+                             (multiple-value-bind (? expr)
+                               (unquotedp obj)
+                               (and ? (collect expr)))))
+                       (flatten tree))))
+      (sort (remove-duplicates (flatten (collect tree)))
+            #'string<= :key #'symbol-name))))
 
 (defmacro apapply-function (fn &rest args)
   (with-gensyms (more-args)
