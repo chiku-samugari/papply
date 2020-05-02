@@ -171,7 +171,7 @@
                          cl:lambda
                          cl:setf
                          #+sbcl sb-int:named-lambda)))
-        `(p ,@expr)
+        `(p ,expr)
         `(function ,expr)))))
 
 (defun extend-sharp-quote ()
