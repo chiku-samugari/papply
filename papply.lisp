@@ -34,10 +34,10 @@
 ;;;   (papply-form (list 0 _ 1))
 ;;;
 ;;; The parameter construction should not be changed therefore.
-(defmacro papply-form ((op &rest forms))
+(defmacro papply-form ((op &rest forms) &environment env)
   (multiple-value-bind (embodied-args params) (embody-template forms)
     (if (and (symbolp op)
-             (or (macro-function op) (special-operator-p op)))
+             (or (macro-function op env) (special-operator-p op)))
       `(lambda (,@params)
          (,op ,@embodied-args))
       (with-gensyms (more-args)
@@ -134,9 +134,9 @@
        (declare (ignorable ,more-args))
        (apply ,fn ,@args ,more-args))))
 
-(defmacro apapply-form ((op &rest forms))
+(defmacro apapply-form ((op &rest forms) &environment env)
   (if (and (symbolp op)
-           (or (macro-function op) (special-operator-p op)))
+           (or (macro-function op env) (special-operator-p op)))
     `(lambda (,@(anaphora-list forms))
        (,op ,@forms))
     (with-gensyms (more-args)
