@@ -58,7 +58,7 @@
   CL:FUNCTION form and PAPPLY generates a partially applied function of
   the function whose first m arguments are partially applied. Here, m is
   the number of elemetns in `args` except forms that includes the symbol
-  `_`. The special symbol `_` works as the place holder for arguments
+  `AZUKI:_`. This special symbol works as the place holder for arguments
   that are not yet fixed. The kth `_` is replaced by the kth parameter
   of the result partially applied function. The order is from left to
   right; depth-first-order.
